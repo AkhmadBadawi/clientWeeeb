@@ -68,6 +68,7 @@ class PenjualanController extends Controller
         $status_pembayaran = $request->status_pembayaran;
         $jumlah = $request->jumlah;
         $tanggal = $request->tanggal;
+
         $client = new Client();
         $url = "localhost:8000/api/barang/$id_barang";
 
@@ -77,54 +78,59 @@ class PenjualanController extends Controller
         $data_barang = $contentArray['data'];
         $harga_barang = $data_barang['harga_barang'];
 
+        $stok_barang = $data_barang['stok_barang'];
         $stok_baru = $data_barang['stok_barang'] - $jumlah;
         $total_pembayaran = $harga_barang * $jumlah;
 
-        $param = [
-            'id_barang' => $id_barang,
-            'nama_barang' => $data_barang['nama_barang'],
-            'stok_barang' => $stok_baru,
-            'harga_barang' => $data_barang['harga_barang'],
-            'deskripsi' => $data_barang['deskripsi'],
-            'id_pemasok' => $data_barang['id_pemasok']
-        ];
+        if ($stok_barang > $jumlah) {
+            $param = [
+                'id_barang' => $id_barang,
+                'nama_barang' => $data_barang['nama_barang'],
+                'stok_barang' => $stok_baru,
+                'harga_barang' => $data_barang['harga_barang'],
+                'deskripsi' => $data_barang['deskripsi'],
+                'id_pemasok' => $data_barang['id_pemasok']
+            ];
 
-        $url3 = "localhost:8000/api/barang/$id_barang";
+            $url3 = "localhost:8000/api/barang/$id_barang";
 
-        $response3 = $client->request('PUT', $url3, [
-            'headers' => ['Content-type' => 'application/json'],
-            'body' => json_encode($param)
-        ]);
-        $content3 = $response3->getBody()->getContents();
-        $contentArray3 = json_decode($content3, true);
+            $response3 = $client->request('PUT', $url3, [
+                'headers' => ['Content-type' => 'application/json'],
+                'body' => json_encode($param)
+            ]);
+            $content3 = $response3->getBody()->getContents();
+            $contentArray3 = json_decode($content3, true);
 
-        if ($contentArray3['status'] != true) {
-            $error = $contentArray3['data'];
-            return redirect()->to('add_penjualan')->withErrors($error)->withInput();
-        }
+            if ($contentArray3['status'] != true) {
+                $error = $contentArray3['data'];
+                return redirect()->to('add_penjualan')->withErrors($error)->withInput();
+            }
 
-        $parameter = [
-            'id_penjualan' => $id_penjualan,
-            'id_barang' => $id_barang,
-            'id_pelanggan' => $id_pelanggan,
-            'total_pembayaran' => $total_pembayaran,
-            'metode_pembayaran' => $metode_pembayaran,
-            'status_pembayaran' => $status_pembayaran,
-            'tanggal' => $tanggal,
-        ];
-        $url2 = "localhost:8000/api/penjualan";
+            $parameter = [
+                'id_penjualan' => $id_penjualan,
+                'id_barang' => $id_barang,
+                'id_pelanggan' => $id_pelanggan,
+                'total_pembayaran' => $total_pembayaran,
+                'metode_pembayaran' => $metode_pembayaran,
+                'status_pembayaran' => $status_pembayaran,
+                'tanggal' => $tanggal,
+            ];
+            $url2 = "localhost:8000/api/penjualan";
 
-        $response2 = $client->request('POST', $url2, [
-            'headers' => ['Content-type' => 'application/json'],
-            'body' => json_encode($parameter)
-        ]);
-        $content2 = $response2->getBody()->getContents();
-        $contentArray2 = json_decode($content2, true);
-        if ($contentArray2['status'] != true) {
-            $error = $contentArray2['data'];
-            return redirect()->to('add_penjualan')->withErrors($error)->withInput();
+            $response2 = $client->request('POST', $url2, [
+                'headers' => ['Content-type' => 'application/json'],
+                'body' => json_encode($parameter)
+            ]);
+            $content2 = $response2->getBody()->getContents();
+            $contentArray2 = json_decode($content2, true);
+            if ($contentArray2['status'] != true) {
+                $error = $contentArray2['data'];
+                return redirect()->to('add_penjualan')->withErrors($error)->withInput();
+            } else {
+                return redirect()->to('penjualan')->with('success', 'Berhasil Memasukkan Data');
+            }
         } else {
-            return redirect()->to('penjualan')->with('success', 'Berhasil Memasukkan Data');
+            return redirect()->to('add_penjualan')->with('gagal', "Jumlah Perminataan Barang Yang Dipilih Harus Kurang dari $stok_barang")->withInput();
         }
     }
 
@@ -199,8 +205,8 @@ class PenjualanController extends Controller
     public function destroy(string $id_penjualan)
     {
         $client = new Client();
-        $url = "localhost:8000/api/penjualan/$id_penjualan";
 
+        $url = "localhost:8000/api/penjualan/$id_penjualan";
         $response = $client->request('DELETE', $url);
         $content = $response->getBody()->getContents();
         $contentArray = json_decode($content, true);

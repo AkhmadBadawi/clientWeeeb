@@ -85,13 +85,13 @@
                                                 <a href="{{ url('penjualan/'.$data['id_penjualan']) }}" class="btn btn-secondary m-2" style="border-radius: 10px;" title="Edit">
                                                     <i class="menu-icon fa fa-pencil"></i>
                                                 </a>
-                                                <form action="{{ url('penjualan/'.$data['id_penjualan']) }}" method="POST" onsubmit="return confirm('Apakah Anda Yakin Menghapus Data ini?')" class="d-inline">
+                                                {{-- <form action="{{ url('penjualan/'.$data['id_penjualan']) }}" method="POST" onsubmit="return confirm('Apakah Anda Yakin Menghapus Data ini?')" class="d-inline">
                                                     @csrf
                                                     @method('delete')
                                                     <button type="submit" name="submit" class="btn btn-danger m-2" style="border-radius: 10px;" title="Delete">
                                                         <i class="menu-icon fa fa-trash-o"></i>
                                                     </button>
-                                                </form>
+                                                </form> --}}
                                             </td>
                                         </tr>
                                     @endforeach

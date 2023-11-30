@@ -27,6 +27,11 @@
 @section('content')
     <div class="content mt-3">
         <div class="animated fadeIn">
+            @if (session()->has('gagal'))
+                <div class="alert alert-danger">
+                    {{ session('gagal') }}
+                </div>
+            @endif
             <form action="./penjualan" method="POST">
                 @csrf
                 <div class="card">
@@ -42,8 +47,9 @@
                         @endif
                         <div class="card-body">
                             <div class="form-group"><label for="id_penjualan" class=" form-control-label">ID
-                                    Penjualan</label><input type="number" id="id_penjualan" placeholder="Masukkan ID Barang"
-                                    name="id_penjualan" class="form-control" value="{{ old('id_penjualan') }}">
+                                    Penjualan</label><input type="number" id="id_penjualan"
+                                    placeholder="Masukkan ID Penjualan" name="id_penjualan" class="form-control"
+                                    value="{{ old('id_penjualan') }}">
                                 <input type="hidden" id="id_pelanggan" name="id_pelanggan" class="form-control"
                                     value="{{ $id_pelanggan ?? old('id_pelanggan') }}">
                             </div>
@@ -85,8 +91,9 @@
                                     name="jumlah" class="form-control" value="{{ old('jumlah') }}">
                             </div>
                             <div class="form-group"><label for="tanggal" class=" form-control-label">Tanggal
-                                    Pengirima</label><input type="date" id="tanggal" placeholder="Masukkan Jumlah Barang"
-                                    name="tanggal" class="form-control" value="{{ old('tanggal') }}">
+                                    Pengirima</label><input type="date" id="tanggal"
+                                    placeholder="Masukkan Jumlah Barang" name="tanggal" class="form-control"
+                                    value="{{ old('tanggal') }}">
                             </div>
                         </div>
                     </div>
