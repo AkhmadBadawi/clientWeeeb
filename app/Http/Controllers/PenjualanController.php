@@ -19,33 +19,33 @@ class PenjualanController extends Controller
         $content = $response->getBody()->getContents();
         $contentArray = json_decode($content, true);
         $data_penjualan = $contentArray['data'];
-        if ($data_penjualan != null){
-            foreach ($data_penjualan as $item){
+        if ($data_penjualan != null) {
+            foreach ($data_penjualan as $item) {
                 $id_barang = $item['id_barang'];
                 $id_pelanggan = $item['id_pelanggan'];
-    
+
                 $url2 = "localhost:8000/api/barang/$id_barang";
                 $response2 = $client->request('GET', $url2);
                 $content2 = $response2->getBody()->getContents();
                 $contentArray2 = json_decode($content2, true);
                 $data_barang[] = $contentArray2['data'];
-                
+
                 $url3 = "localhost:8000/api/pelanggan/$id_pelanggan";
                 $response3 = $client->request('GET', $url3);
                 $content3 = $response3->getBody()->getContents();
                 $contentArray3 = json_decode($content3, true);
                 $data_pelanggan[] = $contentArray3['data'];
             }
-            
+
             $nama_barang = array_column($data_barang, 'nama_barang');
             $nama_pelanggan = array_column($data_pelanggan, 'nama_pelanggan');
-    
-    
-            return view('penjualan.data_penjualan', ['data_penjualan' => $data_penjualan, 'nama_barang' => $nama_barang, 'nama_pelanggan' => $nama_pelanggan ]);
-        }else{
+
+
+            return view('penjualan.data_penjualan', ['data_penjualan' => $data_penjualan, 'nama_barang' => $nama_barang, 'nama_pelanggan' => $nama_pelanggan]);
+        } else {
             return view('penjualan.data_penjualan_kosong');
         }
-        
+
     }
 
     /**
@@ -77,9 +77,32 @@ class PenjualanController extends Controller
         $data_barang = $contentArray['data'];
         $harga_barang = $data_barang['harga_barang'];
 
+        $stok_baru = $data_barang['stok_barang'] - $jumlah;
         $total_pembayaran = $harga_barang * $jumlah;
 
-        
+        $param = [
+            'id_barang' => $id_barang,
+            'nama_barang' => $data_barang['nama_barang'],
+            'stok_barang' => $stok_baru,
+            'harga_barang' => $data_barang['harga_barang'],
+            'deskripsi' => $data_barang['deskripsi'],
+            'id_pemasok' => $data_barang['id_pemasok']
+        ];
+
+        $url3 = "localhost:8000/api/barang/$id_barang";
+
+        $response3 = $client->request('PUT', $url3, [
+            'headers' => ['Content-type' => 'application/json'],
+            'body' => json_encode($param)
+        ]);
+        $content3 = $response3->getBody()->getContents();
+        $contentArray3 = json_decode($content3, true);
+
+        if ($contentArray3['status'] != true) {
+            $error = $contentArray3['data'];
+            return redirect()->to('add_penjualan')->withErrors($error)->withInput();
+        }
+
         $parameter = [
             'id_penjualan' => $id_penjualan,
             'id_barang' => $id_barang,
@@ -121,10 +144,10 @@ class PenjualanController extends Controller
         $response = $client->request('GET', $url);
         $content = $response->getBody()->getContents();
         $contentArray = json_decode($content, true);
-        if($contentArray['status'] != true){
+        if ($contentArray['status'] != true) {
             $error = $contentArray['message'];
             return redirect()->to('penjualan')->withErrors($error);
-        }else{
+        } else {
             $data_penjualan = $contentArray['data'];
             $url2 = "localhost:8000/api/barang";
 
@@ -164,10 +187,10 @@ class PenjualanController extends Controller
         ]);
         $content = $response->getBody()->getContents();
         $contentArray = json_decode($content, true);
-        if($contentArray['status'] != true){
+        if ($contentArray['status'] != true) {
             $error = $contentArray['data'];
             return redirect()->to("penjualan/$id_penjualan")->withErrors($error)->withInput();
-        }else{
+        } else {
             return redirect()->to('penjualan')->with('success', 'Berhasil Mengubah Data');
         }
     }
@@ -181,10 +204,10 @@ class PenjualanController extends Controller
         $response = $client->request('DELETE', $url);
         $content = $response->getBody()->getContents();
         $contentArray = json_decode($content, true);
-        if($contentArray['status'] != true){
+        if ($contentArray['status'] != true) {
             $error = $contentArray['data'];
             return redirect()->to("penjualan")->withErrors($error);
-        }else{
+        } else {
             return redirect()->to('penjualan')->with('success', 'Berhasil Menghapus Data');
         }
     }
