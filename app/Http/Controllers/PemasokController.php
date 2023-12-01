@@ -134,9 +134,23 @@ class PemasokController extends Controller
 
     public function form_add()
     {
-        return view('pemasok.add_pemasok');
+        $random = random_int(10000,99999);
+
+        $client = new Client();
+        $url = "localhost:8000/api/pemasok";
+
+        $response = $client->request('GET', $url);
+        $content = $response->getBody()->getContents();
+        $contentArray = json_decode($content, true);
+        $data_pemasok = $contentArray['data'];
+
+        foreach($data_pemasok as $i){
+            if($random == $i['id_pemasok']){
+                $this->form_add();
+            }
+        }
+        
+        return view('pemasok.add_pemasok', ['random' => $random]);
+        
     }
-
-
-
 }

@@ -48,8 +48,11 @@
                         <div class="card-body">
                             <div class="form-group"><label for="id_penjualan" class=" form-control-label">ID
                                     Penjualan</label><input type="number" id="id_penjualan"
-                                    placeholder="Masukkan ID Penjualan" name="id_penjualan" class="form-control"
-                                    value="{{ old('id_penjualan') }}">
+                                    placeholder="{{ $random }}" name="id_penjualan" class="form-control"
+                                    value="{{ $random }}"  disabled>
+                                    <input type="hidden" id="id_penjualan"
+                                    placeholder="{{ $random }}" name="id_penjualan" class="form-control"
+                                    value="{{ $random }}">
                                 <input type="hidden" id="id_pelanggan" name="id_pelanggan" class="form-control"
                                     value="{{ $id_pelanggan ?? old('id_pelanggan') }}">
                             </div>

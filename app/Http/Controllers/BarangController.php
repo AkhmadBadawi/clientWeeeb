@@ -184,6 +184,21 @@ class BarangController extends Controller
         $content = $response->getBody()->getContents();
         $contentArray = json_decode($content, true);
         $data = $contentArray['data'];
-        return view('barang.add_barang', ['data_pemasok' => $data]);
+
+        $random = random_int(10000,99999);
+
+        $url1 = "localhost:8000/api/barang";
+        $response1 = $client->request('GET', $url1);
+        $content1 = $response1->getBody()->getContents();
+        $contentArray1 = json_decode($content1, true);
+        $data_barang = $contentArray1['data'];
+
+        foreach($data_barang as $i){
+            if($random == $i['id_barang']){
+                $this->form_add();
+            }
+        }
+
+        return view('barang.add_barang', ['data_pemasok' => $data, 'random' => $random]);
     }
 }

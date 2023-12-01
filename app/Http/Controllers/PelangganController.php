@@ -56,14 +56,33 @@ class PelangganController extends Controller
             return redirect()->to('add_pelanggan')->withErrors($error)->withInput();
         } else {
             $url2 = "localhost:8000/api/barang";
-
             $response2 = $client->request('GET', $url2);
             $content2 = $response2->getBody()->getContents();
             $contentArray2 = json_decode($content2, true);
             $data2 = $contentArray2['data'];
 
-            return view('penjualan.add_penjualan', ['id_pelanggan' => $id_pelanggan, 'data_barang' => $data2]);
+            $random = $this->randID();
+            return view('penjualan.add_penjualan', ['id_pelanggan' => $id_pelanggan, 'data_barang' => $data2, 'random' => $random]);
         }
+    }
+
+    public function randID(){
+        $random = random_int(10000,99999);
+
+        $client = new Client();
+        $url1 = "localhost:8000/api/penjualan";
+        $response1 = $client->request('GET', $url1);
+        $content1 = $response1->getBody()->getContents();
+        $contentArray1 = json_decode($content1, true);
+        $data_penjualan = $contentArray1['data'];
+
+        foreach($data_penjualan as $i){
+            if($random == $i['id_penjualan']){
+                $this->randID();
+            }
+        }
+
+        return $random;
     }
 
     /**

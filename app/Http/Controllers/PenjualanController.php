@@ -239,13 +239,26 @@ class PenjualanController extends Controller
 
     public function form_add_pelanggan()
     {
-        return view('pelanggan.add_pelanggan');
+        $random = random_int(10000,99999);
+
+        $client = new Client;
+        $url = "localhost:8000/api/pelanggan";
+        $response = $client->request('GET', $url);
+        $content = $response->getBody()->getContents();
+        $contentArray = json_decode($content, true);
+        $data_pelanggan = $contentArray['data'];
+
+        foreach($data_pelanggan as $i){
+            if($random == $i['id_pelanggan']){
+                $this->form_add_pelanggan();
+            }
+        }
+        return view('pelanggan.add_pelanggan', ['random' => $random]);
     }
 
     public function form_add_penjualan()
     {
         $client = new Client;
-
         $url = "localhost:8000/api/barang";
         $response = $client->request('GET', $url);
         $content = $response->getBody()->getContents();

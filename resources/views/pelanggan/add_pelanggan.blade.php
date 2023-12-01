@@ -43,7 +43,10 @@
                         <div class="card-body">
                             <div class="form-group"><label for="id_pelanggan" class=" form-control-label">ID
                                     Pelangggan</label><input type="number" id="id_pelanggan"
-                                    placeholder="Masukkan ID Pelanggan" name="id_pelanggan" class="form-control" value="{{ old('id_pelanggan') }}"></div>
+                                    placeholder="{{ $random }}" name="id_pelanggan" class="form-control" value="{{ $random }}" disabled>
+                                    <input type="hidden" id="id_pelanggan"
+                                    placeholder="{{ $random }}" name="id_pelanggan" class="form-control" value="{{ $random }}">
+                            </div>
                             <div class="form-group"><label for="nama_pelanggan" class=" form-control-label">Nama
                                     Pelanggan</label><input type="text" id="nama_pelanggan"
                                     placeholder="Masukkan Nama Pelanggan" name="nama_pelanggan" class="form-control" value="{{ old('nama_pelanggan') }}">
